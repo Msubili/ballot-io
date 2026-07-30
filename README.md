@@ -300,3 +300,4 @@ MIT Licence — see `LICENSE` file for details.
 
 Built as a final-year project at Kabarak University, Department of Computer Science & Information Technology, under the supervision of Dr Francis Komen.
 "# ballot-io" 
+"# ballot-io" 
