@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import StatusBadge from '../components/StatusBadge';
 import CategoryBadge from '../components/CategoryBadge';
 import { formatDate } from '../utils/helpers';
+import { useTheme } from '../context/ThemeContext';
 import {
   BarChart,
   Bar,
@@ -26,6 +27,7 @@ import {
 
 export default function ResultsPage() {
   const { id } = useParams();
+  const { theme } = useTheme();
   const [poll, setPoll] = useState(null);
   const [resultsData, setResultsData] = useState([]);
   const [totalVotes, setTotalVotes] = useState(0);
@@ -136,8 +138,8 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600"></div>
-        <p className="mt-4 text-sm text-gray-500">Compiling real-time ballot tallies...</p>
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
+        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">Compiling real-time ballot tallies...</p>
       </div>
     );
   }
@@ -145,8 +147,8 @@ export default function ResultsPage() {
   if (!poll) {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center">
-        <h2 className="text-xl font-bold text-gray-900">Poll Not Found</h2>
-        <Link to="/polls" className="mt-4 inline-block text-indigo-600 font-semibold text-sm">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Poll Not Found</h2>
+        <Link to="/polls" className="mt-4 inline-block text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
           Return to All Polls
         </Link>
       </div>
@@ -154,65 +156,66 @@ export default function ResultsPage() {
   }
 
   const isClosed = poll.status === 'Closed';
+  const isDark = theme === 'dark';
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8 transition-colors">
       {/* Back Link */}
       <Link
         to="/polls"
-        className="inline-flex items-center space-x-1.5 text-xs font-semibold text-gray-500 hover:text-gray-800 transition"
+        className="inline-flex items-center space-x-1.5 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Back to All Polls</span>
       </Link>
 
       {/* Poll Header Card */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm transition-colors">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div className="flex items-center space-x-2">
             <CategoryBadge category={poll.category} />
             <StatusBadge status={poll.status} />
           </div>
 
-          <div className="flex items-center space-x-2 text-xs text-gray-500">
+          <div className="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
             <Radio className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
             <span>Live Sync Active</span>
             <button
               onClick={fetchResults}
               title="Refresh results"
-              className="p-1 hover:text-indigo-600 hover:bg-gray-100 rounded-md transition ml-2"
+              className="p-1 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition ml-2"
             >
               <RefreshCw className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
           {poll.title}
         </h1>
 
         {poll.description && (
-          <p className="mt-2 text-sm text-gray-600 leading-relaxed max-w-3xl">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-relaxed max-w-3xl">
             {poll.description}
           </p>
         )}
 
-        <div className="mt-6 pt-6 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-800 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
           <div>
-            <span className="text-gray-400 block font-medium">Total Ballots Cast</span>
-            <span className="text-xl font-bold text-gray-900 mt-0.5 block">{totalVotes}</span>
+            <span className="text-gray-400 dark:text-gray-500 block font-medium">Total Ballots Cast</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-white mt-0.5 block">{totalVotes}</span>
           </div>
           <div>
-            <span className="text-gray-400 block font-medium">Total Options</span>
-            <span className="text-xl font-bold text-gray-900 mt-0.5 block">{resultsData.length}</span>
+            <span className="text-gray-400 dark:text-gray-500 block font-medium">Total Options</span>
+            <span className="text-xl font-bold text-gray-900 dark:text-white mt-0.5 block">{resultsData.length}</span>
           </div>
           <div>
-            <span className="text-gray-400 block font-medium">Poll Opens</span>
-            <span className="text-xs font-semibold text-gray-700 mt-1 block">{formatDate(poll.start_date)}</span>
+            <span className="text-gray-400 dark:text-gray-500 block font-medium">Poll Opens</span>
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1 block">{formatDate(poll.start_date)}</span>
           </div>
           <div>
-            <span className="text-gray-400 block font-medium">Poll Concludes</span>
-            <span className="text-xs font-semibold text-gray-700 mt-1 block">{formatDate(poll.end_date)}</span>
+            <span className="text-gray-400 dark:text-gray-500 block font-medium">Poll Concludes</span>
+            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 mt-1 block">{formatDate(poll.end_date)}</span>
           </div>
         </div>
       </div>
@@ -244,10 +247,10 @@ export default function ResultsPage() {
       )}
 
       {/* Chart and Results Table */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-6 sm:p-8 shadow-sm space-y-8">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 p-6 sm:p-8 shadow-sm space-y-8 transition-colors">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">Vote Distribution</h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">Vote Distribution</h2>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
             Real-time percentage breakdown and absolute counts.
           </p>
         </div>
@@ -260,12 +263,17 @@ export default function ResultsPage() {
               layout="vertical"
               margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
             >
-              <XAxis type="number" domain={[0, 100]} unit="%" tick={{ fontSize: 11, fill: '#6B7280' }} />
+              <XAxis
+                type="number"
+                domain={[0, 100]}
+                unit="%"
+                tick={{ fontSize: 11, fill: isDark ? '#9CA3AF' : '#6B7280' }}
+              />
               <YAxis
                 type="category"
                 dataKey="name"
                 width={120}
-                tick={{ fontSize: 11, fill: '#374151' }}
+                tick={{ fontSize: 11, fill: isDark ? '#E5E7EB' : '#374151' }}
               />
               <Tooltip
                 formatter={(val, name, item) => [
@@ -273,7 +281,8 @@ export default function ResultsPage() {
                   'Share',
                 ]}
                 contentStyle={{
-                  backgroundColor: '#1E1B4B',
+                  backgroundColor: isDark ? '#111827' : '#1E1B4B',
+                  borderColor: isDark ? '#374151' : '#4338CA',
                   borderRadius: '12px',
                   color: '#fff',
                   fontSize: '12px',
@@ -285,7 +294,7 @@ export default function ResultsPage() {
                   return (
                     <Cell
                       key={`cell-${index}`}
-                      fill={isLeader ? '#4F46E5' : '#818CF8'}
+                      fill={isLeader ? '#4F46E5' : isDark ? '#6366F1' : '#818CF8'}
                     />
                   );
                 })}
@@ -295,8 +304,8 @@ export default function ResultsPage() {
         </div>
 
         {/* Detailed Breakdown Cards */}
-        <div className="space-y-3 pt-4 border-t border-gray-100">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+        <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
             Detailed Breakdown:
           </h3>
 
@@ -307,31 +316,31 @@ export default function ResultsPage() {
                 key={item.id}
                 className={`p-4 rounded-2xl border transition ${
                   isWinner
-                    ? 'border-indigo-300 bg-indigo-50/40'
-                    : 'border-gray-200 bg-gray-50/50'
+                    ? 'border-indigo-300 dark:border-indigo-700 bg-indigo-50/40 dark:bg-indigo-950/40'
+                    : 'border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-gray-400">#{item.position}</span>
-                    <span className="text-sm font-semibold text-gray-900">{item.name}</span>
+                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500">#{item.position}</span>
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">{item.name}</span>
                     {isWinner && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 dark:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300">
                         {isClosed ? 'Winner' : 'Leader'}
                       </span>
                     )}
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-extrabold text-gray-900">{item.percentage}%</span>
-                    <span className="text-xs text-gray-500 ml-2">({item.votes} votes)</span>
+                    <span className="text-sm font-extrabold text-gray-900 dark:text-white">{item.percentage}%</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">({item.votes} votes)</span>
                   </div>
                 </div>
 
                 {/* Progress bar */}
-                <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 h-2.5 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      isWinner ? 'bg-indigo-600' : 'bg-indigo-400'
+                      isWinner ? 'bg-indigo-600 dark:bg-indigo-500' : 'bg-indigo-400 dark:bg-indigo-600'
                     }`}
                     style={{ width: `${item.percentage}%` }}
                   ></div>
@@ -343,13 +352,13 @@ export default function ResultsPage() {
 
         {/* Card Footer */}
         {poll.status === 'Live' && (
-          <div className="pt-4 border-t border-gray-100 flex items-center justify-between">
-            <span className="text-xs text-gray-500">
+          <div className="pt-4 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
               Voting is currently active.
             </span>
             <Link
               to={`/polls/${poll.id}/vote`}
-              className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition shadow-sm"
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition shadow-sm"
             >
               Cast Your Vote
             </Link>
